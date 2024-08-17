@@ -1,8 +1,8 @@
-mat-card {
-  /* height: auto; */
-  width: 80%;
-  margin: auto;
-}
 mat-form-field {
   height: auto;
+}
+
+.button {
+  margin: 1rem;
+  width: 25%;
 }
