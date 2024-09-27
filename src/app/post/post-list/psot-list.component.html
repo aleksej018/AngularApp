@@ -7,7 +7,7 @@
       {{ post.content }}
       <mat-action-row>
         <button mat-raised-button>Edit Post</button>
-        <button mat-flat-button>Delete Post</button>
+        <button mat-flat-button (click)="onDelete(post.id)">Delete Post</button>
       </mat-action-row>
     </p>
   </mat-expansion-panel>

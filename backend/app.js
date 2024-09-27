@@ -1,8 +1,20 @@
-// import express from "express";
-const bodyParser = require("body-parser");
-const express = require("express");
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import express from "express";
+import { Post } from "./models/post.js";
 
 const app = express();
+
+mongoose
+  .connect(
+    "mongodb+srv://admin:XGxITBZQwjOW0KZf@cluster0.uy1jw.mongodb.net/node-angular?retryWrites=true&w=majority&appName=node-angular"
+  )
+  .then(() => {
+    console.log("Connected to database");
+  })
+  .catch(() => {
+    console.log("Connection failed!");
+  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -21,35 +33,33 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/posts", (req, res, next) => {
-  const posts = req.body;
-  console.log(posts);
-  res.status(201).json({
-    message: "Post added successfully",
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
+  post.save().then((createdPost) => {
+    res.status(201).json({
+      message: "Post added successfully",
+      postId: createdPost._id,
+    });
   });
 });
 
 app.get("/api/posts", (req, res, next) => {
-  const posts = [
-    {
-      id: "kajshe12jk",
-      title: "First server-side post",
-      content: "This is coming from the server",
-    },
-    {
-      id: "ka12he12jk",
-      title: "Second server-side post",
-      content: "This is coming from the server",
-    },
-    {
-      id: "krahhe123hk",
-      title: "Third server-side post",
-      content: "This is coming from the server",
-    },
-  ];
-  res.status(200).json({
-    message: "Post fetched successfully",
-    posts: posts,
+  Post.find().then((documents) => {
+    res.status(200).json({
+      message: "Post fetched successfully",
+      posts: documents,
+    });
   });
 });
 
-module.exports = app;
+//
+app.delete("/api/posts/:id", (req, res, next) => {
+  Post.deleteOne({ _id: req.params.id }).then((result) => {
+    console.log(result);
+    res.status(200).json({ message: "Post deleted!" });
+  });
+});
+
+export default app;
